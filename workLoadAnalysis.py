@@ -328,14 +328,17 @@ def plot_normalized_activity(
         if column_name not in activity_df.columns:
             continue
 
-        activity_df.plot(
-            y=column_name,
-            ax=axis,
-            marker=resolved_markers[index % len(resolved_markers)],
-            markevery=markevery,
-        )
+        series = pd.to_numeric(activity_df[column_name], errors="coerce")
 
+        if series.notna().any():
+            series.plot(
+                ax=axis,
+                marker=resolved_markers[index % len(resolved_markers)],
+                markevery=markevery,
+                label=DEFAULT_PHYSICIST_CODE_BY_NAME[physicist_name],
+            )
     axis.set_xlabel("Fecha")
     axis.set_ylabel("Actividad acumulada normalizada")
     axis.grid(True, alpha=0.3)
+    axis.legend()
     return figure, axis

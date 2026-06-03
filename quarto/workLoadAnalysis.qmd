@@ -1,0 +1,43 @@
+---
+title: "Dosimetría clínica en radioterapia. Análisis de carga de trabajo."
+format: html
+execute:
+  echo: false
+  warning: false
+---
+
+```{python}
+import sys
+from pathlib import Path
+
+# Añadir el directorio raíz del proyecto al path para importar el módulo
+sys.path.insert(0, str(Path.cwd().parent))
+
+import workLoadAnalysis as wla
+```
+
+```{python}
+# Rutas a los archivos de datos (relativas al directorio raíz del proyecto)
+data_dir = Path.cwd().parent
+
+assignments_file = data_dir / "RepartoDosimetrias.xls"
+availability_file = data_dir / "PhysicistAvailabilities.xlsx"
+```
+
+```{python}
+# Generar el dataframe de actividad a partir de los archivos Excel
+activity_df = wla.build_activity_dataframe_from_files(
+    assignments_file,
+    availability_file,
+    complexity=True,
+)
+
+# Obtener la lista de físicos del dataframe
+physicists = wla.load_physicists_from_assignments(assignments_file)
+```
+
+```{python}
+# Generar el gráfico de actividad normalizada acumulada
+fig, ax = wla.plot_normalized_activity(activity_df, physicists)
+fig.tight_layout()
+```
